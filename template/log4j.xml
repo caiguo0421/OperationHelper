@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE log4j:configuration SYSTEM "log4j.dtd">
+<log4j:configuration xmlns:log4j='http://jakarta.apache.org/log4j/'>
+    <!-- appender -->
+    <!-- STDOUT -->
+    <appender name="STDOUT" class="org.apache.log4j.ConsoleAppender">
+        <layout class="org.apache.log4j.PatternLayout">
+            <param name="ConversionPattern" value="[%d][%-5p][%c:%L] - %m%n"/>
+        </layout>
+    </appender>
+
+    <appender name="FILE" class="org.apache.log4j.rolling.RollingFileAppender">
+        <rollingPolicy class="org.apache.log4j.rolling.TimeBasedRollingPolicy">
+            <param name="ActiveFileName" value="${{{tenant_code}}.root}/js/test/log.txt"/>
+            <param name="FileNamePattern" value="${{{tenant_code}}.root}/js/test/log.%d{yyyy-MM-dd}.txt"/>
+        </rollingPolicy>
+        <triggeringPolicy class="org.apache.log4j.rolling.SizeBasedTriggeringPolicy">
+            <!--文件大小 40MB-->
+            <param name="maxFileSize" value="40000000"/>
+        </triggeringPolicy>
+        <layout class="org.apache.log4j.PatternLayout">
+            <param name="ConversionPattern" value="[%d][%-5p][%c:%L] - %m%n"/>
+        </layout>
+    </appender>
+
+
+    <logger name="org.apache.struts2">
+        <level value="INFO" />
+    </logger>
+    <logger name="org.springframework">
+        <level value="INFO" />
+    </logger>
+    <logger name="com.opensymphony.xwork2">
+        <level value="INFO" />
+    </logger>
+    <logger name="org.hibernate">
+        <level value="INFO" />
+    </logger>
+    <logger name="com.alibaba.druid">
+        <level value="INFO" />
+    </logger>
+
+    <!--Hibernate 的日志SQL 输出, hibernate.show_sql:true-->
+    <!--<logger name="org.hibernate.SQL">
+        <level value="DEBUG" />
+    </logger>-->
+
+    <root>
+        <level value="DEBUG"/>
+        <!--<appender-ref ref="STDOUT"/>-->
+        <appender-ref ref="FILE"/>
+    </root>
+</log4j:configuration>

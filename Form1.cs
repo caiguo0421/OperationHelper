@@ -18,7 +18,9 @@ namespace OperationHelper
 
         private List<FileInfo> copyFileList = new List<FileInfo>();
 
-  
+        private const string TEMPLATE_TENANT_CODE = "{{tenant_code}}";
+
+
 
         /// <summary>
         /// 被排除的目录，这些目录下的文件不会被更新
@@ -29,6 +31,7 @@ namespace OperationHelper
         {
             InitializeComponent();
             InitConfig();
+            InitCbb();
             this.btn_copy.Click += btn_copy_Click;
             this.btn_open.Click += btn_open_Click;
         }
@@ -45,13 +48,32 @@ namespace OperationHelper
             }
         }
 
+        private void InitCbb()
+        {
+            string[] array = { "源文件","模板文件"};
+            this.cbb_sourceType.DataSource = array;
+            this.cbb_sourceType.SelectedIndex = 0;
+            this.cbb_sourceType.SelectedIndexChanged += Cbb_sourceType_SelectedIndexChanged;
+        }
+
+        private void Cbb_sourceType_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            txt_sourceFile.Text = string.Empty;
+
+            if (this.cbb_sourceType.Text == "模板文件")
+            {
+                openFileDialog1.InitialDirectory = Application.StartupPath + @"\template";
+            }
+
+        }
+
         void btn_open_Click(object sender, EventArgs e)
         {
+
             if (openFileDialog1.ShowDialog() == DialogResult.OK)
             {
                 txt_sourceFile.Text = openFileDialog1.FileName;
             }
-
         }
 
 
@@ -168,8 +190,38 @@ namespace OperationHelper
                 targetFile.Directory.Create();
             }
 
-            File.Copy(sourceFile.FullName, targetFile.FullName, true);
+            //复制文件
+            CopyFile(sourceFile, targetFile, subDic);
             copyFileList.Add(targetFile);
+        }
+
+        private  void CopyFile(FileInfo sourceFile, FileInfo targetFile, DirectoryInfo subDic)
+        {
+            bool template = (this.cbb_sourceType.Text == "模板文件");
+            if (!template)
+            {
+                File.Copy(sourceFile.FullName, targetFile.FullName, true);
+                return;
+            }
+
+            string text = string.Empty;
+            using (FileStream fs = new FileStream(sourceFile.FullName, FileMode.Open, FileAccess.Read))
+            {
+                using (StreamReader sr = new StreamReader(fs))
+                {
+                    text = sr.ReadToEnd();
+                    //subDic是工程的目录
+                    text = text.Replace(TEMPLATE_TENANT_CODE,subDic.Name);
+                }
+            }
+
+            using (FileStream fs = new FileStream(targetFile.FullName, FileMode.Create, FileAccess.Write))
+            {
+                using (StreamWriter sw = new StreamWriter(fs))
+                {
+                    sw.Write(text);
+                }
+            }
         }
 
         private void ClearLog()
@@ -185,6 +237,5 @@ namespace OperationHelper
 
             this.txt_log.Text += string.Format("{0}-{1}:{2}\r\n", DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"), logType, msg);
         }
-
     }
 }
