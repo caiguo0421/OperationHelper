@@ -20,6 +20,10 @@ namespace OperationHelper
 
         private const string TEMPLATE_TENANT_CODE = "{{tenant_code}}";
 
+        /// <summary>
+        /// 工程的目录
+        /// </summary>
+        private const string TEMPLATE_TENANT_DIR = "{{tenant_dir}}";
 
 
         /// <summary>
@@ -211,7 +215,7 @@ namespace OperationHelper
                 {
                     text = sr.ReadToEnd();
                     //subDic是工程的目录
-                    text = text.Replace(TEMPLATE_TENANT_CODE,subDic.Name);
+                    text = text.Replace(TEMPLATE_TENANT_CODE, subDic.Name).Replace(TEMPLATE_TENANT_DIR, subDic.FullName);
                 }
             }
 
