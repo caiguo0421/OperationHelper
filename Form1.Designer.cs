@@ -31,9 +31,6 @@
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             this.tab_main = new System.Windows.Forms.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
-            this.pnl_buttom = new System.Windows.Forms.Panel();
-            this.chb_force = new System.Windows.Forms.CheckBox();
-            this.btn_copy = new System.Windows.Forms.Button();
             this.tbpnl_main = new System.Windows.Forms.TableLayoutPanel();
             this.txt_tenant = new System.Windows.Forms.TextBox();
             this.lbl_tomcat = new System.Windows.Forms.Label();
@@ -41,17 +38,20 @@
             this.txt_sourceFile = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
             this.txt_subPath = new System.Windows.Forms.TextBox();
-            this.btn_open = new System.Windows.Forms.Button();
             this.label3 = new System.Windows.Forms.Label();
             this.gpb_log = new System.Windows.Forms.GroupBox();
             this.txt_log = new System.Windows.Forms.TextBox();
             this.chb_except = new System.Windows.Forms.CheckBox();
+            this.btn_open = new System.Windows.Forms.Button();
             this.cbb_sourceType = new System.Windows.Forms.ComboBox();
+            this.pnl_buttom = new System.Windows.Forms.Panel();
+            this.chb_force = new System.Windows.Forms.CheckBox();
+            this.btn_copy = new System.Windows.Forms.Button();
             this.tab_main.SuspendLayout();
             this.tabPage1.SuspendLayout();
-            this.pnl_buttom.SuspendLayout();
             this.tbpnl_main.SuspendLayout();
             this.gpb_log.SuspendLayout();
+            this.pnl_buttom.SuspendLayout();
             this.SuspendLayout();
             // 
             // openFileDialog1
@@ -79,37 +79,6 @@
             this.tabPage1.TabIndex = 0;
             this.tabPage1.Text = "文件替换";
             this.tabPage1.UseVisualStyleBackColor = true;
-            // 
-            // pnl_buttom
-            // 
-            this.pnl_buttom.Controls.Add(this.chb_force);
-            this.pnl_buttom.Controls.Add(this.btn_copy);
-            this.pnl_buttom.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.pnl_buttom.Location = new System.Drawing.Point(3, 420);
-            this.pnl_buttom.Name = "pnl_buttom";
-            this.pnl_buttom.Size = new System.Drawing.Size(1021, 34);
-            this.pnl_buttom.TabIndex = 11;
-            // 
-            // chb_force
-            // 
-            this.chb_force.Anchor = System.Windows.Forms.AnchorStyles.Right;
-            this.chb_force.AutoSize = true;
-            this.chb_force.Location = new System.Drawing.Point(854, 9);
-            this.chb_force.Name = "chb_force";
-            this.chb_force.Size = new System.Drawing.Size(72, 16);
-            this.chb_force.TabIndex = 12;
-            this.chb_force.Text = "强制更新";
-            this.chb_force.UseVisualStyleBackColor = true;
-            // 
-            // btn_copy
-            // 
-            this.btn_copy.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btn_copy.Location = new System.Drawing.Point(932, 5);
-            this.btn_copy.Name = "btn_copy";
-            this.btn_copy.Size = new System.Drawing.Size(75, 23);
-            this.btn_copy.TabIndex = 0;
-            this.btn_copy.Text = "更新";
-            this.btn_copy.UseVisualStyleBackColor = true;
             // 
             // tbpnl_main
             // 
@@ -199,18 +168,6 @@
             this.txt_subPath.TabIndex = 4;
             this.txt_subPath.Text = "\\WEB-INF\\lib\\";
             // 
-            // btn_open
-            // 
-            this.btn_open.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
-            this.btn_open.Font = new System.Drawing.Font("宋体", 7.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.btn_open.Location = new System.Drawing.Point(936, 89);
-            this.btn_open.Margin = new System.Windows.Forms.Padding(0);
-            this.btn_open.Name = "btn_open";
-            this.btn_open.Size = new System.Drawing.Size(80, 22);
-            this.btn_open.TabIndex = 9;
-            this.btn_open.Text = "打开";
-            this.btn_open.UseVisualStyleBackColor = true;
-            // 
             // label3
             // 
             this.label3.Anchor = System.Windows.Forms.AnchorStyles.Right;
@@ -256,6 +213,18 @@
             this.chb_except.Text = "除外";
             this.chb_except.UseVisualStyleBackColor = true;
             // 
+            // btn_open
+            // 
+            this.btn_open.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
+            this.btn_open.Font = new System.Drawing.Font("宋体", 7.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.btn_open.Location = new System.Drawing.Point(936, 89);
+            this.btn_open.Margin = new System.Windows.Forms.Padding(0);
+            this.btn_open.Name = "btn_open";
+            this.btn_open.Size = new System.Drawing.Size(80, 22);
+            this.btn_open.TabIndex = 9;
+            this.btn_open.Text = "打开";
+            this.btn_open.UseVisualStyleBackColor = true;
+            // 
             // cbb_sourceType
             // 
             this.cbb_sourceType.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
@@ -264,6 +233,37 @@
             this.cbb_sourceType.Name = "cbb_sourceType";
             this.cbb_sourceType.Size = new System.Drawing.Size(121, 20);
             this.cbb_sourceType.TabIndex = 14;
+            // 
+            // pnl_buttom
+            // 
+            this.pnl_buttom.Controls.Add(this.chb_force);
+            this.pnl_buttom.Controls.Add(this.btn_copy);
+            this.pnl_buttom.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.pnl_buttom.Location = new System.Drawing.Point(3, 420);
+            this.pnl_buttom.Name = "pnl_buttom";
+            this.pnl_buttom.Size = new System.Drawing.Size(1021, 34);
+            this.pnl_buttom.TabIndex = 11;
+            // 
+            // chb_force
+            // 
+            this.chb_force.Anchor = System.Windows.Forms.AnchorStyles.Right;
+            this.chb_force.AutoSize = true;
+            this.chb_force.Location = new System.Drawing.Point(854, 9);
+            this.chb_force.Name = "chb_force";
+            this.chb_force.Size = new System.Drawing.Size(72, 16);
+            this.chb_force.TabIndex = 12;
+            this.chb_force.Text = "强制更新";
+            this.chb_force.UseVisualStyleBackColor = true;
+            // 
+            // btn_copy
+            // 
+            this.btn_copy.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btn_copy.Location = new System.Drawing.Point(932, 5);
+            this.btn_copy.Name = "btn_copy";
+            this.btn_copy.Size = new System.Drawing.Size(75, 23);
+            this.btn_copy.TabIndex = 0;
+            this.btn_copy.Text = "更新";
+            this.btn_copy.UseVisualStyleBackColor = true;
             // 
             // Form1
             // 
@@ -275,12 +275,12 @@
             this.Text = "Tomcat文件替换";
             this.tab_main.ResumeLayout(false);
             this.tabPage1.ResumeLayout(false);
-            this.pnl_buttom.ResumeLayout(false);
-            this.pnl_buttom.PerformLayout();
             this.tbpnl_main.ResumeLayout(false);
             this.tbpnl_main.PerformLayout();
             this.gpb_log.ResumeLayout(false);
             this.gpb_log.PerformLayout();
+            this.pnl_buttom.ResumeLayout(false);
+            this.pnl_buttom.PerformLayout();
             this.ResumeLayout(false);
 
         }

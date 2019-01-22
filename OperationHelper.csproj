@@ -99,7 +99,7 @@
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
-    <Content Include="template\log4j.xml" />
+    <Content Include="template\log4j2.xml" />
     <Content Include="template\web.xml" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
