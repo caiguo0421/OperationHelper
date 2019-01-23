@@ -13,7 +13,7 @@
     <!-- 日志默认存放路径(所有级别日志) -->
     <property name="rolling_fileName">${basePath}/log.txt</property>
     <!-- 日志默认压缩路径,将超过指定文件大小的日志,自动存入按"年月"建立的文件夹下面并进行压缩,作为存档 -->
-    <property name="rolling_filePattern">${basePath}/log-%d{MM-dd-yyyy}-%i.txt</property>
+    <property name="rolling_filePattern">${basePath}/log-%d{yyyy-MM-dd}-%i.txt</property>
   </Properties>
 
   <!--先定义所有的appender-->
