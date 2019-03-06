@@ -1,0 +1,4 @@
+company_no,company_name,server_url,datasource_url,datasource_db_name,datasource_username,datasource_password,server_version,ftp_hostname,ftp_port,ftp_username,ftp_password,ftp_attachment_path
+WBCS,ÌìÓÑÈí¼þ,http://115.29.178.60:8888/MobileSrvDvPlus_wb,jdbc:sqlserver://115.29.178.60:51276;,A4S6_DFCS,sa,123321,,,,,,
+YPZ,YPZ,http://115.29.178.60:8888/ypz,jdbc:sqlserver://115.29.178.60:51276;,YPZ,sa,123321,DM,,,,,
+",,,,,",",,,,",,,,,,,,,,,
