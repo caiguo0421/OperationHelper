@@ -82,7 +82,7 @@ namespace OperationHelper
             }
             catch (Exception ex)
             {
-                MessageBox.Show("程序出现了问题：" + ex.Message);
+                MessageBox.Show("程序出现了问题：" + ex.StackTrace);
                 return;
             }
             MessageBox.Show("成功");
@@ -163,6 +163,7 @@ namespace OperationHelper
                     //TODO
                     dic_target.Delete(true);//删除原来已有的
                 }
+                CopyDirectory(dicTemplate, dic_target, dr);
             }
         }
 
@@ -180,21 +181,30 @@ namespace OperationHelper
 
             foreach (FileInfo fi in dicTemplate.GetFiles())
             {
-                fi.CopyTo(dic_target.FullName + fi.Name, true);
+
+                if (fi.FullName.EndsWith(FILE_APPLICATION) || fi.FullName.EndsWith(FILE_LOG4J_PROPERTIES) || fi.FullName.EndsWith(FILE_WEB))
+                {
+                    CopyFile(fi, dic_target, dr_csv);
+                }
+                else
+                {
+                    //直接复制
+                    fi.CopyTo(dic_target.FullName + "\\" + fi.Name, true);
+                }
+
             }
 
             foreach (DirectoryInfo di in dicTemplate.GetDirectories())
             {
-                CopyDirectory(di, new DirectoryInfo(dic_target.FullName + di.Name), dr_csv);
+                CopyDirectory(di, new DirectoryInfo(dic_target.FullName + "\\" + di.Name), dr_csv);
             }
         }
 
-       
+
 
         private static void CopyFile(FileInfo fiTemplate, DirectoryInfo dic_target, DataRow dr_csv)
         {
-            String file_target = dic_target.FullName + fiTemplate.Name;
-            fiTemplate.CopyTo(file_target, true);
+            String file_target = dic_target.FullName + "\\" + fiTemplate.Name;
             string text = string.Empty;
             using (FileStream fs = new FileStream(fiTemplate.FullName, FileMode.Open, FileAccess.Read))
             {
@@ -245,18 +255,18 @@ namespace OperationHelper
                     }
                     else if (file_target.EndsWith(FILE_LOG4J_PROPERTIES))
                     {
-                        if(Regex.IsMatch(text, REGEX_LOG_PROPERTIES))
+                        if (Regex.IsMatch(text, REGEX_LOG_PROPERTIES))
                         {
                             text = Regex.Replace(text, REGEX_LOG_PROPERTIES, string.Format("{0}.root", dr_csv["company_no"]));
                         }
                     }
                     else if (file_target.EndsWith(FILE_WEB))
                     {
-                        if(Regex.IsMatch(text, REGEX_WEB_XML))
+                        if (Regex.IsMatch(text, REGEX_WEB_XML))
                         {
                             text = string.Format("<param-value>{0}.root</param-value>", dr_csv["company_no"]);
                         }
-                       
+
                     }
 
                     sw.Write(text);
