@@ -20,7 +20,7 @@ namespace OperationHelper
         private bool force = false;
 
 
-        private const string REGEX_WEB_XML = "<param-value>\\w.root</param-value>";
+        private const string REGEX_WEB_XML = ".root</param-value>";
 
         private const String REGEX_LOG_PROPERTIES = "{\\w.root}";
 
@@ -36,11 +36,15 @@ namespace OperationHelper
             txt_cvs.TextChanged += Txt_cvs_TextChanged;
             btn_cvs.Click += Btn_cvs_Click;
             btn_deploy.Click += Btn_deploy_Click;
+            btn_sql.Click += Btn_sql_Click;
         }
+
+
 
         private void InitConfig()
         {
             this.txt_tomcatHome.Text = ConfigurationManager.AppSettings["tomcatHome"];
+            this.txt_template.Text = ConfigurationManager.AppSettings["templateHome"];
         }
 
         private void InitCbb()
@@ -61,13 +65,81 @@ namespace OperationHelper
 
         private void Txt_cvs_TextChanged(object sender, EventArgs e)
         {
+
+        }
+
+        private void DoOpenCVS()
+        {
             string cvsFilePath = txt_cvs.Text;
             if (String.IsNullOrEmpty(cvsFilePath))
             {
+                throw new Exception("cvs路径为空");
+            }
+            dt_csv = CSVFileHelper.OpenCSV(cvsFilePath);
+        }
+
+
+        private void Btn_sql_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                this.ClearLog();
+                DoOpenCVS();
+                DoGenSql();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(String.Format("程序出现问题：{0}\r\n{1}", ex.Message, ex.StackTrace));
                 return;
             }
+            MessageBox.Show("成功");
+        }
 
-            dt_csv = CSVFileHelper.OpenCSV(cvsFilePath);
+        private const String SQL_TEMPLATE = @"IF NOT EXISTS ( SELECT  *
+                FROM    dbo.Company_Url_Mapping
+                WHERE   company_no = @company_no)
+INSERT INTO dbo.Company_Url_Mapping (company_no, company_name, server_type, simplified, server_url, datasource_url, datasource_db_name, datasource_username, datasource_password, server_version)
+VALUES (@company_no, @company_name, @server_type, @simplified, @server_url, @datasource_url, @datasource_db_name, @datasource_username, @datasource_password, @server_version)
+GO
+
+IF  EXISTS ( SELECT  *
+                FROM    dbo.Company_Url_Mapping
+                WHERE   company_no = @company_no)
+UPDATE dbo.Company_Url_Mapping
+SET company_name = @company_name,
+	server_type = @server_type,
+	simplified = @simplified,
+	server_url = @server_url,
+	datasource_url = @datasource_url,
+	datasource_db_name = @datasource_db_name,
+	datasource_username = @datasource_username,
+	datasource_password = @datasource_password,
+	server_version = @server_version
+    WHERE company_no = @company_no
+GO";
+
+        private void DoGenSql()
+        {
+            String serverType = "prod";
+            String simplified = "simplified";
+            if (this.cbb_sourceType.Text == "完整版")
+            {
+                simplified = "complete";
+            }
+            foreach (DataRow dr in dt_csv.Rows)
+            {
+                string sql = SQL_TEMPLATE.Replace("@company_no", string.Format("'{0}'", dr["company_no"]))
+                    .Replace("@company_name", string.Format("'{0}'", dr["company_name"]))
+                    .Replace("@server_type", string.Format("'{0}'", serverType))
+                    .Replace("@simplified", string.Format("'{0}'", simplified))
+                    .Replace("@server_url", string.Format("'{0}'", dr["server_url"]))
+                    .Replace("@datasource_url", string.Format("'{0}'", dr["datasource_url"]))
+                    .Replace("@datasource_db_name", string.Format("'{0}'", dr["datasource_db_name"]))
+                    .Replace("@datasource_username", string.Format("'{0}'", dr["datasource_username"]))
+                    .Replace("@datasource_password", string.Format("'{0}'", dr["datasource_password"]))
+                    .Replace("@server_version", string.Format("'{0}'", dr["server_version"]));
+                this.WriteSql(sql);
+            }
         }
 
         private void Btn_deploy_Click(object sender, EventArgs e)
@@ -78,11 +150,13 @@ namespace OperationHelper
 
             try
             {
+                this.ClearLog();
+                DoOpenCVS();
                 DoDeploy();
             }
             catch (Exception ex)
             {
-                MessageBox.Show("程序出现了问题：" + ex.StackTrace);
+                MessageBox.Show(String.Format("程序出现问题：{0}\r\n{1}", ex.Message, ex.StackTrace));
                 return;
             }
             MessageBox.Show("成功");
@@ -149,31 +223,40 @@ namespace OperationHelper
                 {
                     continue;
                 }
-
                 DirectoryInfo dic_target = new DirectoryInfo(dicWebapp.FullName + "\\" + companyNo);
+
                 if (!force && dic_target.Exists)
                 {
                     //如果项目已经存在而且不是强制更新，跳过
+                    this.WriteLog(string.Format("项目：{0} 已存在,跳过", companyNo));
                     continue;
                 }
 
                 if (dic_target.Exists)
                 {
                     //备份
-                    //TODO
+                    String backTraget = txt_tomcatHome.Text + "\\web-bak\\" + companyNo + "-" + DateTime.Now.ToString("yyyyMMddhhmmss.fff");
+                    CopyDirectoryForBackup(dic_target.FullName, backTraget, true);
                     dic_target.Delete(true);//删除原来已有的
+                    this.WriteLog(string.Format("项目：{0} 备份到{1}中", companyNo, backTraget));
                 }
-                CopyDirectory(dicTemplate, dic_target, dr);
+
+
+                CopyDirectory(dicTemplate.FullName, dic_target.FullName, dr);
+
+                this.WriteLog(string.Format("项目：{0} 部署完毕，路径{1}", companyNo, dic_target.FullName));
             }
         }
 
-        private static void CopyDirectory(DirectoryInfo dicTemplate, DirectoryInfo dic_target, DataRow dr_csv)
+        private void CopyDirectory(String templateStr, String targetStr, DataRow dr_csv)
         {
+            DirectoryInfo dicTemplate = new DirectoryInfo(templateStr);
             if (!dicTemplate.Exists)
             {
-                throw new Exception(string.Format("{0}不存在", dicTemplate.FullName));
+                throw new Exception(string.Format("{0}不存在", templateStr));
             }
 
+            DirectoryInfo dic_target = new DirectoryInfo(targetStr);
             if (!dic_target.Exists)
             {
                 dic_target.Create();
@@ -196,8 +279,9 @@ namespace OperationHelper
 
             foreach (DirectoryInfo di in dicTemplate.GetDirectories())
             {
-                CopyDirectory(di, new DirectoryInfo(dic_target.FullName + "\\" + di.Name), dr_csv);
+                CopyDirectory(di.FullName, dic_target.FullName + "\\" + di.Name, dr_csv);
             }
+
         }
 
 
@@ -205,77 +289,78 @@ namespace OperationHelper
         private static void CopyFile(FileInfo fiTemplate, DirectoryInfo dic_target, DataRow dr_csv)
         {
             String file_target = dic_target.FullName + "\\" + fiTemplate.Name;
-            string text = string.Empty;
-            using (FileStream fs = new FileStream(fiTemplate.FullName, FileMode.Open, FileAccess.Read))
+            Console.WriteLine(String.Format("fiTemplate:{0}，file_target:{0}", fiTemplate.FullName, file_target));
+            String[] lines = File.ReadAllLines(fiTemplate.FullName);
+            if (lines == null)
             {
-                using (StreamReader sr = new StreamReader(fs))
-                {
-                    text = sr.ReadToEnd();
-                }
+                return;
             }
 
-            using (FileStream fs = new FileStream(file_target, FileMode.Create, FileAccess.Write))
+            for (int i = 0; i < lines.Length; i++)
             {
-                using (StreamWriter sw = new StreamWriter(fs))
+                String replaceText = lines[i];
+                if (file_target.EndsWith(FILE_APPLICATION))
                 {
-                    if (file_target.EndsWith(FILE_APPLICATION))
+                    if (replaceText.Contains("jdbc.url"))
                     {
-                        if (text.Contains("jdbc.url"))
-                        {
-                            text = string.Format("jdbc.url={0}", dr_csv["datasource_url"] + "DatabaseName=" + dr_csv["datasource_db_name"]);
-                        }
-                        else if (text.Contains("jdbc.username"))
-                        {
-                            text = string.Format("jdbc.username={0}", dr_csv["datasource_username"]);
-                        }
-                        else if (text.Contains("jdbc.password"))
-                        {
-                            text = string.Format("jdbc.password={0}", dr_csv["datasource_password"]);
-                        }
-                        else if (text.Contains("ftp.hostname"))
-                        {
-                            text = string.Format("ftp.hostname={0}", dr_csv["ftp_hostname"]);
-                        }
-                        else if (text.Contains("ftp.port"))
-                        {
-                            text = string.Format("ftp.port={0}", dr_csv["ftp_port"]);
-                        }
-                        else if (text.Contains("ftp.username"))
-                        {
-                            text = string.Format("ftp.username={0}", dr_csv["ftp_username"]);
-                        }
-                        else if (text.Contains("ftp.password"))
-                        {
-                            text = string.Format("ftp.password={0}", dr_csv["ftp_password"]);
-                        }
-                        else if (text.Contains("ftp.attachment.path"))
-                        {
-                            text = string.Format("ftp.attachment.path={0}", dr_csv["ftp_attachment_path"]);
-                        }
+                        replaceText = string.Format("jdbc.url={0}", dr_csv["datasource_url"] + "DatabaseName=" + dr_csv["datasource_db_name"]);
                     }
-                    else if (file_target.EndsWith(FILE_LOG4J_PROPERTIES))
+                    else if (replaceText.Contains("jdbc.username"))
                     {
-                        if (Regex.IsMatch(text, REGEX_LOG_PROPERTIES))
-                        {
-                            text = Regex.Replace(text, REGEX_LOG_PROPERTIES, string.Format("{0}.root", dr_csv["company_no"]));
-                        }
+                        replaceText = string.Format("jdbc.username={0}", dr_csv["datasource_username"]);
                     }
-                    else if (file_target.EndsWith(FILE_WEB))
+                    else if (replaceText.Contains("jdbc.password"))
                     {
-                        if (Regex.IsMatch(text, REGEX_WEB_XML))
-                        {
-                            text = string.Format("<param-value>{0}.root</param-value>", dr_csv["company_no"]);
-                        }
-
+                        replaceText = string.Format("jdbc.password={0}", dr_csv["datasource_password"]);
                     }
-
-                    sw.Write(text);
+                    else if (replaceText.Contains("ftp.hostname"))
+                    {
+                        replaceText = string.Format("ftp.hostname={0}", dr_csv["ftp_hostname"]);
+                    }
+                    else if (replaceText.Contains("ftp.port"))
+                    {
+                        replaceText = string.Format("ftp.port={0}", dr_csv["ftp_port"]);
+                    }
+                    else if (replaceText.Contains("ftp.username"))
+                    {
+                        replaceText = string.Format("ftp.username={0}", dr_csv["ftp_username"]);
+                    }
+                    else if (replaceText.Contains("ftp.password"))
+                    {
+                        replaceText = string.Format("ftp.password={0}", dr_csv["ftp_password"]);
+                    }
+                    else if (replaceText.Contains("ftp.attachment.path"))
+                    {
+                        replaceText = string.Format("ftp.attachment.path={0}", dr_csv["ftp_attachment_path"]);
+                    }
                 }
+                else if (file_target.EndsWith(FILE_LOG4J_PROPERTIES))
+                {
+                    if (Regex.IsMatch(replaceText, REGEX_LOG_PROPERTIES))
+                    {
+                        replaceText = Regex.Replace(replaceText, REGEX_LOG_PROPERTIES, string.Format("{0}.root", dr_csv["company_no"]));
+                    }
+                }
+                else if (file_target.EndsWith(FILE_WEB))
+                {
+                    if (replaceText.Contains(REGEX_WEB_XML))
+                    {
+                        replaceText = string.Format("<param-value>{0}.root</param-value>", dr_csv["company_no"]);
+                    }
+                    //if (Regex.IsMatch(replaceText, REGEX_WEB_XML))
+                    //{
+                    //    replaceText = string.Format("<param-value>{0}.root</param-value>", dr_csv["company_no"]);
+                    //}
+                }
+
+                lines[i] = replaceText;
             }
+
+            File.WriteAllLines(file_target, lines);
         }
 
 
-        private static bool CopyDirectory(string SourcePath, string DestinationPath, bool overwriteexisting)
+        private static bool CopyDirectoryForBackup(string SourcePath, string DestinationPath, bool overwriteexisting)
         {
             bool ret = false;
             try
@@ -298,7 +383,7 @@ namespace OperationHelper
                     foreach (string drs in Directory.GetDirectories(SourcePath))
                     {
                         DirectoryInfo drinfo = new DirectoryInfo(drs);
-                        if (CopyDirectory(drs, DestinationPath + drinfo.Name, overwriteexisting) == false)
+                        if (CopyDirectoryForBackup(drs, DestinationPath + drinfo.Name, overwriteexisting) == false)
                             ret = false;
                     }
                 }
@@ -309,6 +394,28 @@ namespace OperationHelper
                 ret = false;
             }
             return ret;
+        }
+
+
+
+        private void ClearLog()
+        {
+            this.txt_log.Text = string.Empty;
+        }
+
+        private void WriteLog(string msg, string logType = "DEBUG")
+        {
+            if (string.IsNullOrEmpty(msg))
+                return;
+
+
+            this.txt_log.Text += string.Format("{0}-{1}:{2}\r\n", DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"), logType, msg);
+        }
+
+
+        private void WriteSql(string sql)
+        {
+            this.txt_log.Text += string.Format("{0}\r\n", sql);
         }
     }
 }

@@ -73,8 +73,12 @@ namespace OperationHelper
             DataTable dt = new DataTable();
             FileStream fs = new FileStream(filePath, System.IO.FileMode.Open, System.IO.FileAccess.Read);
 
+
             //StreamReader sr = new StreamReader(fs, Encoding.UTF8);
-            StreamReader sr = new StreamReader(fs);
+            //StreamReader sr = new StreamReader(fs, Encoding.ASCII);
+            StreamReader sr = new StreamReader(filePath, System.Text.Encoding.Default, false);
+
+
             //string fileContent = sr.ReadToEnd();
             //encoding = sr.CurrentEncoding;
             //记录每次读取的一行记录
@@ -91,6 +95,9 @@ namespace OperationHelper
             {
                 //strLine = Common.ConvertStringUTF8(strLine, encoding);
                 //strLine = Common.ConvertStringUTF8(strLine);
+                
+
+                //strLine = Encoding.UTF8.GetString(System.Text.Encoding.Convert(Encoding.ASCII, Encoding.UTF8, Encoding.ASCII.GetBytes(strLine)));
 
                 if (IsFirst == true)
                 {

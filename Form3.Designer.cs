@@ -46,6 +46,7 @@
             this.chb_force = new System.Windows.Forms.CheckBox();
             this.btn_deploy = new System.Windows.Forms.Button();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
+            this.btn_sql = new System.Windows.Forms.Button();
             this.tab_main.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.tbpnl_main.SuspendLayout();
@@ -219,6 +220,7 @@
             // 
             // pnl_buttom
             // 
+            this.pnl_buttom.Controls.Add(this.btn_sql);
             this.pnl_buttom.Controls.Add(this.chb_force);
             this.pnl_buttom.Controls.Add(this.btn_deploy);
             this.pnl_buttom.Dock = System.Windows.Forms.DockStyle.Bottom;
@@ -231,7 +233,7 @@
             // 
             this.chb_force.Anchor = System.Windows.Forms.AnchorStyles.Right;
             this.chb_force.AutoSize = true;
-            this.chb_force.Location = new System.Drawing.Point(813, 9);
+            this.chb_force.Location = new System.Drawing.Point(747, 10);
             this.chb_force.Name = "chb_force";
             this.chb_force.Size = new System.Drawing.Size(72, 16);
             this.chb_force.TabIndex = 12;
@@ -241,7 +243,7 @@
             // btn_deploy
             // 
             this.btn_deploy.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btn_deploy.Location = new System.Drawing.Point(891, 5);
+            this.btn_deploy.Location = new System.Drawing.Point(825, 6);
             this.btn_deploy.Name = "btn_deploy";
             this.btn_deploy.Size = new System.Drawing.Size(75, 23);
             this.btn_deploy.TabIndex = 0;
@@ -251,6 +253,16 @@
             // openFileDialog1
             // 
             this.openFileDialog1.FileName = "openFileDialog1";
+            // 
+            // btn_sql
+            // 
+            this.btn_sql.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btn_sql.Location = new System.Drawing.Point(902, 5);
+            this.btn_sql.Name = "btn_sql";
+            this.btn_sql.Size = new System.Drawing.Size(75, 23);
+            this.btn_sql.TabIndex = 13;
+            this.btn_sql.Text = "生成脚本";
+            this.btn_sql.UseVisualStyleBackColor = true;
             // 
             // Form3
             // 
@@ -292,5 +304,6 @@
         private System.Windows.Forms.Button button1;
         private System.Windows.Forms.Button btn_cvs;
         private System.Windows.Forms.OpenFileDialog openFileDialog1;
+        private System.Windows.Forms.Button btn_sql;
     }
 }
