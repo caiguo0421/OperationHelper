@@ -52,6 +52,7 @@ namespace OperationHelper
             string[] array = { "简版", "完整版" };
             this.cbb_sourceType.DataSource = array;
             this.cbb_sourceType.SelectedIndex = 0;
+
         }
 
 
