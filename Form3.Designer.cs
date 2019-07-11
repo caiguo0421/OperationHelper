@@ -43,10 +43,10 @@
             this.btn_cvs = new System.Windows.Forms.Button();
             this.cbb_sourceType = new System.Windows.Forms.ComboBox();
             this.pnl_buttom = new System.Windows.Forms.Panel();
+            this.btn_sql = new System.Windows.Forms.Button();
             this.chb_force = new System.Windows.Forms.CheckBox();
             this.btn_deploy = new System.Windows.Forms.Button();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
-            this.btn_sql = new System.Windows.Forms.Button();
             this.tab_main.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.tbpnl_main.SuspendLayout();
@@ -229,6 +229,16 @@
             this.pnl_buttom.Size = new System.Drawing.Size(980, 34);
             this.pnl_buttom.TabIndex = 11;
             // 
+            // btn_sql
+            // 
+            this.btn_sql.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btn_sql.Location = new System.Drawing.Point(902, 5);
+            this.btn_sql.Name = "btn_sql";
+            this.btn_sql.Size = new System.Drawing.Size(75, 23);
+            this.btn_sql.TabIndex = 13;
+            this.btn_sql.Text = "生成脚本";
+            this.btn_sql.UseVisualStyleBackColor = true;
+            // 
             // chb_force
             // 
             this.chb_force.Anchor = System.Windows.Forms.AnchorStyles.Right;
@@ -253,16 +263,6 @@
             // openFileDialog1
             // 
             this.openFileDialog1.FileName = "openFileDialog1";
-            // 
-            // btn_sql
-            // 
-            this.btn_sql.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btn_sql.Location = new System.Drawing.Point(902, 5);
-            this.btn_sql.Name = "btn_sql";
-            this.btn_sql.Size = new System.Drawing.Size(75, 23);
-            this.btn_sql.TabIndex = 13;
-            this.btn_sql.Text = "生成脚本";
-            this.btn_sql.UseVisualStyleBackColor = true;
             // 
             // Form3
             // 
